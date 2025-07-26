@@ -37,18 +37,16 @@ GRANT CONNECT ON DATABASE car_maintenance_db TO carmaintenance;
 GRANT USAGE ON SCHEMA public TO carmaintenance;
 GRANT USAGE ON SCHEMA car_maintenance TO carmaintenance;
 
--- Uprawnienia do tworzenia obiektów w schemacie - USUNIĘTE
--- Aplikacja nie powinna tworzyć obiektów w runtime
 
 -- ====================
--- UPRAWNIENIA DO TABEL - ZASADA NAJMNIEJSZYCH UPRAWNIEŃ
+-- UPRAWNIENIA DO TABEL
 -- ====================
 
--- Tabele główne (core tables) - pełne CRUD dla danych użytkowników
+-- Tabele główne - pełne CRUD dla danych użytkowników
 GRANT SELECT, INSERT, UPDATE ON TABLE car_maintenance.users TO carmaintenance;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE car_maintenance.cars TO carmaintenance;
 
--- Tabele słownikowe (dictionary tables) - TYLKO ODCZYT
+-- Tabele słownikowe - TYLKO ODCZYT
 -- Aplikacja nie powinna modyfikować słowników w runtime
 GRANT SELECT ON TABLE car_maintenance.usage_types_dict TO carmaintenance;
 GRANT SELECT ON TABLE car_maintenance.service_category_dict TO carmaintenance;
@@ -59,32 +57,30 @@ GRANT SELECT ON TABLE car_maintenance.reminder_type_dict TO carmaintenance;
 -- Tabela części - ograniczone uprawnienia (INSERT/SELECT dla nowych części, UPDATE tylko własnych)
 GRANT SELECT, INSERT, UPDATE ON TABLE car_maintenance.parts TO carmaintenance;
 
--- Moduł tankowania (fuelings module) - pełne CRUD
+-- Moduł tankowania - pełne CRUD
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE car_maintenance.fuelings TO carmaintenance;
 
--- Moduł serwisowania (maintenance module) - pełne CRUD
+-- Moduł serwisowania - pełne CRUD
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE car_maintenance.services TO carmaintenance;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE car_maintenance.service_items TO carmaintenance;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE car_maintenance.service_item_parts TO carmaintenance;
 
--- Moduł zadań (todo module) - pełne CRUD
+-- Moduł zadań - pełne CRUD
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE car_maintenance.repair_todo TO carmaintenance;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE car_maintenance.todo_parts TO carmaintenance;
 
--- Moduł przypomnień (reminders module) - pełne CRUD
+-- Moduł przypomnień - pełne CRUD
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE car_maintenance.reminders TO carmaintenance;
 
 -- ====================
--- UPRAWNIENIA DO SEKWENCJI (SEQUENCES) - TYLKO POTRZEBNE
+-- UPRAWNIENIA DO SEKWENCJI
 -- ====================
 
 -- Sekwencje dla tabel głównych
 GRANT USAGE, SELECT ON SEQUENCE car_maintenance.users_user_id_seq TO carmaintenance;
 GRANT USAGE, SELECT ON SEQUENCE car_maintenance.cars_car_id_seq TO carmaintenance;
 
--- Sekwencje dla tabel słownikowych - BRAK UPRAWNIEŃ (tylko odczyt tabel)
-
--- Sekwencje dla tabeli części (aplikacja może dodawać nowe części)
+-- Sekwencje dla tabeli części
 GRANT USAGE, SELECT ON SEQUENCE car_maintenance.parts_part_id_seq TO carmaintenance;
 
 -- Sekwencje dla modułów aplikacyjnych
@@ -96,7 +92,7 @@ GRANT USAGE, SELECT ON SEQUENCE car_maintenance.todo_parts_id_seq TO carmaintena
 GRANT USAGE, SELECT ON SEQUENCE car_maintenance.reminders_rem_id_seq TO carmaintenance;
 
 -- ====================
--- UPRAWNIENIA DO WIDOKÓW (VIEWS)
+-- UPRAWNIENIA DO WIDOKÓW
 -- ====================
 
 -- Widoki analityczne
@@ -118,41 +114,6 @@ GRANT EXECUTE ON FUNCTION car_maintenance.cleanup_old_data(INTEGER) TO carmainte
 GRANT EXECUTE ON FUNCTION car_maintenance.update_updated_at_column() TO carmaintenance;
 
 -- ====================
--- UPRAWNIENIA DO PRZYSZŁYCH STORED PROCEDURES
--- ====================
-
--- OGRANICZONE uprawnienia do tworzenia funkcji - TYLKO dla administratora
--- Aplikacja będzie tylko WYKONYWAĆ istniejące procedury, nie tworzyć nowych
-
--- Procedury dla zarządzania użytkownikami
--- (przewidywane: authenticate_user, get_user_profile, update_user_profile)
--- Użytkownik aplikacyjny NIE MOŻE: create_user, delete_user, manage_permissions
-
--- Procedury dla zarządzania samochodami
--- (przewidywane: add_car, update_car_mileage, update_car_details, get_car_summary, delete_car)
-
--- Procedury dla tankowania
--- (przewidywane: add_fueling, calculate_consumption, get_fuel_statistics, update_fuel_prices, delete_fueling)
-
--- Procedury dla serwisowania
--- (przewidywane: add_service, add_service_item, calculate_service_costs, get_service_history, delete_service)
-
--- Procedury dla zadań naprawczych
--- (przewidywane: create_todo, update_todo_status, resolve_todo, get_pending_todos, delete_todo)
-
--- Procedury dla przypomnień
--- (przewidywane: create_reminder, update_reminder, mark_reminder_done, get_due_reminders, delete_reminder)
-
--- Procedury analityczne (tylko odczyt)
--- (przewidywane: generate_cost_report, generate_maintenance_report, export_user_data)
-
--- UWAGA: Użytkownik aplikacyjny NIE MOŻE:
--- - Modyfikować słowników w runtime
--- - Tworzyć nowych tabel, widoków, funkcji
--- - Zarządzać użytkownikami i uprawnieniami
--- - Wykonywać operacji administracyjnych na bazie danych
-
--- ====================
 -- UPRAWNIENIA DO ROZSZERZEŃ
 -- ====================
 
@@ -160,7 +121,7 @@ GRANT EXECUTE ON FUNCTION car_maintenance.update_updated_at_column() TO carmaint
 GRANT USAGE ON SCHEMA public TO carmaintenance;
 
 -- ====================
--- AUTOMATYCZNE UPRAWNIENIA DLA PRZYSZŁYCH OBIEKTÓW - OGRANICZONE
+-- AUTOMATYCZNE UPRAWNIENIA DLA PRZYSZŁYCH OBIEKTÓW
 -- ====================
 
 -- Automatyczne uprawnienia TYLKO do wykonywania nowych funkcji (stored procedures)
@@ -168,10 +129,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA car_maintenance
 GRANT EXECUTE ON FUNCTIONS TO carmaintenance;
 
 -- ====================
--- UPRAWNIENIA DO MONITOROWANIA I DIAGNOSTYKI - OGRANICZONE
+-- UPRAWNIENIA DO MONITOROWANIA I DIAGNOSTYKI
 -- ====================
 
--- Ograniczone uprawnienia do metadanych - tylko schemat car_maintenance
+-- Ograniczone uprawnienia do metadanyche
 GRANT SELECT ON information_schema.tables TO carmaintenance;
 GRANT SELECT ON information_schema.columns TO carmaintenance;
 
@@ -193,10 +154,10 @@ ALTER USER carmaintenance CONNECTION LIMIT 20;
 -- Ustawienie domyślnego schematu
 ALTER USER carmaintenance SET search_path = car_maintenance, public;
 
--- Ustawienie timeout dla transakcji (15 minut - krótszy dla aplikacji)
+-- Ustawienie timeout dla transakcji
 ALTER USER carmaintenance SET statement_timeout = '15min';
 
--- Ustawienie timeout dla bezczynności (1 godzina - krótszy dla aplikacji)
+-- Ustawienie timeout dla bezczynności
 ALTER USER carmaintenance SET idle_in_transaction_session_timeout = '1h';
 
 -- Zabezpieczenia dodatkowe
