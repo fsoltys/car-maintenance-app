@@ -7,7 +7,7 @@ name: Build and deploy Python app to Azure Web App - car-maintenance-backend
 on:
   push:
     branches:
-      - main
+      - backend
   workflow_dispatch:
 
 jobs:
