@@ -6,7 +6,7 @@ INSERT INTO usage_types_dict (name) VALUES
 ('Miasto'),
 ('Autostrada'),
 ('Mieszana'),
-('Trasa'),
+('Trasa')
 ON CONFLICT (name) DO NOTHING;
 
 -- Insert service categories first (required for foreign keys)
@@ -166,7 +166,7 @@ ON CONFLICT (name) DO NOTHING;
 INSERT INTO todo_status_dict (name) VALUES 
 ('Otwarte'),
 ('Zrealizowane'),
-('Anulowane'),
+('Anulowane')
 ON CONFLICT (name) DO NOTHING;
 
 -- Reminder_type_dict as categories

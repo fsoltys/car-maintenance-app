@@ -17,14 +17,14 @@ BEGIN
     END IF;
 END $$;
 
--- Tworzenie bazy danych car_maintenance_db (jeśli nie istnieje)
+-- Tworzenie bazy danych car-maintenance-db (jeśli nie istnieje)
 DO $$ 
 BEGIN
-    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'car_maintenance_db') THEN
+    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'car-maintenance-db') THEN
         -- Nie można utworzyć bazy danych wewnątrz transakcji
-        RAISE NOTICE 'Utwórz bazę danych ręcznie: CREATE DATABASE car_maintenance_db OWNER carmaintenance;';
+        RAISE NOTICE 'Utwórz bazę danych ręcznie: CREATE DATABASE car-maintenance-db OWNER carmaintenance;';
     ELSE
-        RAISE NOTICE 'Baza danych car_maintenance_db już istnieje.';
+        RAISE NOTICE 'Baza danych car-maintenance-db już istnieje.';
     END IF;
 END $$;
 
@@ -33,7 +33,7 @@ END $$;
 -- ====================
 
 -- Podstawowe uprawnienia do bazy danych
-GRANT CONNECT ON DATABASE car_maintenance_db TO carmaintenance;
+GRANT CONNECT ON DATABASE "car-maintenance-db" TO carmaintenance;
 GRANT USAGE ON SCHEMA public TO carmaintenance;
 GRANT USAGE ON SCHEMA car_maintenance TO carmaintenance;
 

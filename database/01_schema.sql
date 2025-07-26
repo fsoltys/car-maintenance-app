@@ -277,7 +277,6 @@ CREATE INDEX IF NOT EXISTS idx_reminders_car_done ON reminders(car_id, is_done);
 CREATE INDEX IF NOT EXISTS idx_fuelings_fuel_date ON fuelings(fuel_date);
 CREATE INDEX IF NOT EXISTS idx_fuelings_car_date ON fuelings(car_id, fuel_date);
 CREATE INDEX IF NOT EXISTS idx_parts_updated_at ON parts(updated_at);
-CREATE INDEX IF NOT EXISTS idx_service_items_labor_hours ON service_items(labor_hours) WHERE labor_hours IS NOT NULL;
 
 -- Partial indexes for common filtered queries
 CREATE INDEX IF NOT EXISTS idx_repair_todo_unresolved ON repair_todo(car_id, priority, created_at) WHERE is_resolved = false;
