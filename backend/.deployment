@@ -1,0 +1,4 @@
+# Azure deployment configuration
+SCM_DO_BUILD_DURING_DEPLOYMENT=1
+ENABLE_ORYX_BUILD=true
+POST_BUILD_SCRIPT_PATH=deployment.sh

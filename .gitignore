@@ -9,6 +9,15 @@
 .env.*
 
 # ----------------------
+# Security - NEVER commit secrets!
+# ----------------------
+appsettings.json
+**/secrets.json
+**/*secret*
+**/*password*
+**/*key*.json
+
+# ----------------------
 # Flutter / Dart
 # ----------------------
 **/build/
