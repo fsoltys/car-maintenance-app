@@ -1,5 +1,5 @@
 [build]
-command = "pip install -r requirements.txt"
+command = "pip install --upgrade pip && pip install -r requirements.txt && pip list"
 
 [run]
 command = "python -m gunicorn --bind=0.0.0.0 --timeout 600 --access-logfile '-' --error-logfile '-' main:app"
