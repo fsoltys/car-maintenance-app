@@ -41,7 +41,7 @@ jobs:
         with:
           name: python-app
           path: |
-            .
+            backend/
             !venv/
 
   deploy:
@@ -60,6 +60,6 @@ jobs:
         with:
           app-name: 'car-maintenance-backend'
           slot-name: 'Production'
-          package: './backend'
+          package: '.'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
         
