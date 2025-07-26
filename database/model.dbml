@@ -1,0 +1,158 @@
+// ERD model for car maintenance application
+// Generated from PostgreSQL schema
+
+// ========== USERS ==========
+Table users {
+  user_id integer [primary key]
+  username varchar [not null, unique]
+  hashed_password varchar [not null]
+  is_active bool [not null, default: true]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+}
+
+// ========== CARS ==========
+Table cars {
+  car_id integer [primary key]
+  user_id integer [not null, ref: > users.user_id]
+  car_name varchar [not null]
+  fuel_capacity real [not null]
+  current_mileage integer [not null, default: 0]
+  first_mileage integer [not null, default: 0]
+  bought_date timestamp [not null]
+  last_inspection timestamp [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+}
+
+// ========== USAGE TYPES DICTIONARY ==========
+Table usage_types_dict {
+  usage_type integer [primary key]
+  name varchar [not null, unique]
+}
+
+// ========== SERVICE TYPES DICTIONARY && CATEGORIES ==========
+Table service_category_dict {
+  category_id integer [primary key]
+  name varchar [not null, unique]
+}
+
+Table service_type_dict {
+  service_type_id integer [primary key]
+  name varchar [not null, unique]
+  description text
+  category_id integer [not null, ref: > service_category_dict.category_id]
+}
+
+// ========== REMINDER TYPES DICTIONARY ==========
+Table reminder_type_dict {
+  type_id integer [primary key]
+  description varchar [not null, unique]
+}
+
+// ========== TODO STATUS DICTIONARY ==========
+Table todo_status_dict {
+  status_id integer [primary key]
+  name varchar [not null, unique]
+}
+
+// ========== PARTS ==========
+Table parts {
+  part_id integer [primary key]
+  part_number varchar
+  part_name varchar [not null]
+  manufacturer varchar
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (part_number, manufacturer) [unique]
+  }
+}
+
+// ========== FUELINGS ==========
+Table fuelings {
+  fillup_id integer [primary key]
+  car_id integer [not null, ref: > cars.car_id]
+  amount real [not null]
+  price real [not null]
+  usage_type integer [not null, ref: > usage_types_dict.usage_type]
+  current_mileage integer [not null]
+  fuel_date timestamp [not null, default: `now()`]
+  price_per_liter real
+  created_at timestamp [not null, default: `now()`]
+}
+
+// ========== SERVICES ==========
+Table services {
+  service_id integer [primary key]
+  car_id integer [not null, ref: > cars.car_id]
+  mileage integer [not null]
+  service_date timestamp [not null]
+  cost real [not null]
+  notes text
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+}
+
+Table service_items {
+  item_id integer [primary key]
+  service_id integer [not null, ref: > services.service_id]
+  service_type_id integer [not null, ref: > service_type_dict.service_type_id]
+  price real [not null]
+  created_at timestamp [not null, default: `now()`]
+}
+
+Table service_item_parts {
+  item_id integer [not null, ref: > service_items.item_id]
+  part_id integer [not null, ref: > parts.part_id]
+  quantity real [not null]
+  unit_price real
+  notes text
+  created_at timestamp [not null, default: `now()`]
+}
+
+// ========== REPAIR TODO ==========
+Table repair_todo {
+  todo_id integer [primary key]
+  car_id integer [not null, ref: > cars.car_id]
+  title varchar [not null]
+  description text
+  priority integer [not null] // 1 = niskie, 2 = średnie, 3 = wysokie
+  created_at timestamp [not null, default: `now()`]
+  is_resolved bool [not null, default: false]
+  resolved_at timestamp
+  status_id integer [not null, ref: > todo_status_dict.status_id]
+}
+
+Table todo_parts {
+  id integer [primary key]
+  todo_id integer [not null, ref: > repair_todo.todo_id]
+  part_id integer [not null, ref: > parts.part_id]
+  quantity real [not null]
+  unit_price real
+  estimated_cost real
+  notes text
+  created_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (todo_id, part_id) [unique]
+  }
+}
+
+// ========== REMINDERS ==========
+Table reminders {
+  rem_id integer [primary key]
+  car_id integer [not null, ref: > cars.car_id]
+  name varchar [not null]
+  type_id integer [not null, ref: > reminder_type_dict.type_id]
+  day_interval integer
+  mileage_interval integer
+  condition_type varchar [not null] // 'time', 'mileage', 'both', 'manual'
+  service_id integer [ref: > services.service_id, null]
+  todo_id integer [ref: > repair_todo.todo_id, null]
+  part_number varchar
+  notes text
+  is_done bool [not null, default: false]
+  due_date timestamp
+}
